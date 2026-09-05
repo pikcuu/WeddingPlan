@@ -83,15 +83,20 @@ function getAllData_(){
 }
 
 function jsonOut_(obj){
-  return ContentService.createTextOutput(JSON.stringify(obj)).setMimeType(ContentService.MimeType.JSON);
+  const output = ContentService.createTextOutput(JSON.stringify(obj));
+  output.setMimeType(ContentService.MimeType.JSON);
+  output.setHeader("Access-Control-Allow-Origin", "*");
+  output.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+  output.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  return output;
 }
 
 /* ================= doGet ================= */
 function doGet(e){
-  const action = (e.parameter.action || "all");
+  const action = e?.parameter?.action || "all";
   if (action === "verifyPin"){
     const cfg = readConfig_();
-    const pin = String(e.parameter.pin || "");
+    const pin = String(e?.parameter?.pin || "");
     return jsonOut_({ ok: pin === String(cfg.pin || "") });
   }
   return jsonOut_(getAllData_());
