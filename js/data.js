@@ -12,10 +12,10 @@ const CONFIG = {
   APPS_SCRIPT_URL: "https://script.google.com/macros/s/AKfycbxcJQWeoRz6iz6qPmAX6cyBG7r3dwM4MziTKAlw7C8YJnRqk_-5O9VjWY9JnClYONhN/exec", // contoh: "https://script.google.com/macros/s/XXXXX/exec"
   FALLBACK_PIN: "141172",
   FALLBACK: {
-    namaPria: "Nama Mempelai Pria",
-    namaWanita: "Nama Mempelai Wanita",
+    namaPria: "Moh Taufik Hidayat",
+    namaWanita: "Nurul Muayanah",
     tagline: "Merangkai adat Bugis, dari Mapettuada menuju Resepsi.",
-    tanggalResepsi: "2026-12-12T09:00:00",
+    tanggalResepsi: "2026-11-24T09:00:00",
     fotoHero: ""
   }
 };
