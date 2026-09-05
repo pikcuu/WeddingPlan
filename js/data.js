@@ -10,7 +10,7 @@
 
 const CONFIG = {
   APPS_SCRIPT_URL: "https://script.google.com/macros/s/AKfycbxcJQWeoRz6iz6qPmAX6cyBG7r3dwM4MziTKAlw7C8YJnRqk_-5O9VjWY9JnClYONhN/exec", // contoh: "https://script.google.com/macros/s/XXXXX/exec"
-  FALLBACK_PIN: "141172",
+  FALLBACK_PIN: "2402",
   FALLBACK: {
     namaPria: "Moh Taufik Hidayat",
     namaWanita: "Nurul Muayanah",
