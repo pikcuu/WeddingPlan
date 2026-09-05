@@ -9,7 +9,7 @@
    ========================================================== */
 
 const CONFIG = {
-  APPS_SCRIPT_URL: "https://script.google.com/macros/s/AKfycbxcJQWeoRz6iz6qPmAX6cyBG7r3dwM4MziTKAlw7C8YJnRqk_-5O9VjWY9JnClYONhN/exec", // contoh: "https://script.google.com/macros/s/XXXXX/exec"
+  APPS_SCRIPT_URL: "https://script.google.com/macros/s/AKfycbxvqXknGZZ_nbWVPyBbn9nCcDlwKuaj1jvT6wSniopPzQR1Jt5UqDhPZ_k-V5LOk2eF/exec", // contoh: "https://script.google.com/macros/s/XXXXX/exec"
   FALLBACK_PIN: "2402",
   FALLBACK: {
     namaPria: "Moh Taufik Hidayat",
