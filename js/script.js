@@ -353,9 +353,9 @@
           ${v.harga ? escapeHtml(v.harga) : ""}
         </p>
         <select class="status-select" data-id="${v.id}">
-          <option ${v.status === "Dipertimbangkan" ? "selected" : ""}>Dipertimbangkan</option>
-          <option ${v.status === "Dihubungi" ? "selected" : ""}>Dihubungi</option>
-          <option ${v.status === "Deal" ? "selected" : ""}>Deal</option>
+          <option value="Dipertimbangkan" ${v.status === "Dipertimbangkan" ? "selected" : ""}>Dipertimbangkan</option>
+          <option value="Dihubungi" ${v.status === "Dihubungi" ? "selected" : ""}>Dihubungi</option>
+          <option value="Deal" ${v.status === "Deal" ? "selected" : ""}>Deal</option>
         </select>
         <button class="icon-btn" data-del="${v.id}" aria-label="Hapus">✕ Hapus</button>`;
       grid.appendChild(card);
