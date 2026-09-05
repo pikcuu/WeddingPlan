@@ -382,13 +382,21 @@
   }
 
   function openLightbox(url, caption){
-    $("#lightboxImg").src = url;
-    $("#lightboxCaption").textContent = caption || "";
-    $("#lightbox").hidden = false;
+    const img = $("#lightboxImg");
+    const captionEl = $("#lightboxCaption");
+    if (img) img.src = url;
+    if (captionEl) captionEl.textContent = caption || "";
+    const lightbox = $("#lightbox");
+    if (lightbox) lightbox.hidden = false;
   }
+
   function closeLightbox(){
-    $("#lightbox").hidden = true;
-    $("#lightboxImg").src = "";
+    const lightbox = $("#lightbox");
+    if (lightbox) {
+      lightbox.hidden = true;
+      const img = $("#lightboxImg");
+      if (img) img.src = "";
+    }
   }
 
   /* ================= HELPERS ================= */
@@ -449,8 +457,25 @@
       e.target.reset();
     });
 
-    $("#lightboxClose").addEventListener("click", closeLightbox);
-    $("#lightbox").addEventListener("click", e => { if (e.target.id === "lightbox") closeLightbox(); });
+    // Lightbox event handlers - dengan penanganan yang lebih baik
+    const lightboxClose = $("#lightboxClose");
+    const lightbox = $("#lightbox");
+
+    if (lightboxClose) {
+      lightboxClose.addEventListener("click", (e) => {
+        e.stopPropagation();
+        closeLightbox();
+      });
+    }
+
+    if (lightbox) {
+      lightbox.addEventListener("click", (e) => {
+        // Tutup hanya jika klik di background (element dengan id="lightbox"), bukan di content
+        if (e.target === lightbox) {
+          closeLightbox();
+        }
+      });
+    }
   }
 
   /* ================= BOOT ================= */
