@@ -11,13 +11,16 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Hari Bahagia">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%236E2F35'/%3E%3Ccircle cx='32' cy='32' r='24' fill='none' stroke='%23D9B276' stroke-width='2'/%3E%3Cpath d='M32 44s-11-7-11-14a6 6 0 0 1 11-3 6 6 0 0 1 11 3c0 7-11 14-11 14z' fill='%23FBEEE3'/%3E%3C/svg%3E">
+<!-- Pengaman: elemen tersembunyi tetap tersembunyi walau browser masih memakai style.css lama dari cache -->
+<style>[hidden]{display:none!important}dialog:not([open]){display:none}</style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <!-- Font dimuat tanpa memblokir halaman, supaya PIN bisa langsung dipakai di jaringan lambat -->
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Jost:wght@300;400;500;600&display=swap">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Jost:wght@300;400;500;600&display=swap" media="print" onload="this.media='all'">
 <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Jost:wght@300;400;500;600&display=swap"></noscript>
-<link rel="stylesheet" href="css/style.css">
+<!-- Naikkan angka ?v= setiap kali file CSS/JS diubah agar browser mengambil versi terbaru -->
+<link rel="stylesheet" href="css/style.css?v=2.1">
 </head>
 <body>
 <noscript><p class="noscript">Website ini membutuhkan JavaScript. Aktifkan JavaScript di browser kamu.</p></noscript>
@@ -248,7 +251,7 @@
 <datalist id="kategoriList"></datalist>
 <datalist id="picList"></datalist>
 
-<script src="js/data.js"></script>
-<script src="js/script.js"></script>
+<script src="js/data.js?v=2.1"></script>
+<script src="js/script.js?v=2.1"></script>
 </body>
 </html>
