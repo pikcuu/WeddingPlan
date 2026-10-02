@@ -38,7 +38,9 @@
     BUSY: "Google Sheet sedang sibuk. Coba lagi beberapa detik lagi.",
     NOT_FOUND: "Data tidak ditemukan — mungkin sudah dihapus dari perangkat lain.",
     BAD_REQUEST: "Permintaan tidak valid. Muat ulang halaman lalu coba lagi.",
-    NETWORK: "Tidak bisa terhubung ke Google Sheet. Periksa koneksi internet.",
+    // Apps Script yang error membalas tanpa header CORS, sehingga di browser terlihat seperti gangguan jaringan
+    NETWORK: "Google Sheet tidak bisa dihubungi. Jika internet lancar, pastikan Code.gs terbaru sudah di-deploy (Deploy › Manage deployments › New version, akses: Anyone).",
+    OFFLINE: "Perangkat sedang offline. Periksa koneksi internet.",
     TIMEOUT: "Google Sheet terlalu lama merespons. Coba lagi.",
     SERVER: "Respons server tidak dikenali. Pastikan Code.gs terbaru sudah di-deploy ulang (Deploy › Manage deployments › New version).",
     UNKNOWN: "Terjadi kesalahan. Coba lagi."
@@ -257,7 +259,10 @@
     err.code = code;
     return err;
   }
-  const errorMessage = err => ERRORS[err && err.code] || (err && err.message) || ERRORS.UNKNOWN;
+  function errorMessage(err){
+    if (err && err.code === "NETWORK" && navigator.onLine === false) return ERRORS.OFFLINE;
+    return ERRORS[err && err.code] || (err && err.message) || ERRORS.UNKNOWN;
+  }
   const isNetworkError = err => !!err && (err.code === "NETWORK" || err.code === "TIMEOUT");
 
   async function http(method, params){
@@ -484,10 +489,31 @@
     </div>`;
   }
 
+  const isDialogOpen = () => $("#dialog").hasAttribute("open");
+
+  /** Browser lama (mis. Safari iOS < 15.4) belum mendukung <dialog>: sediakan pengganti sederhana. */
+  function ensureDialogSupport(){
+    const dlg = $("#dialog");
+    if (typeof dlg.showModal === "function") return;
+    dlg.classList.add("dialog-fallback");
+    dlg.showModal = () => { dlg.setAttribute("open", ""); };
+    dlg.close = value => {
+      if (!dlg.hasAttribute("open")) return;
+      if (value !== undefined) dlg.returnValue = value;
+      dlg.removeAttribute("open");
+      dlg.dispatchEvent(new Event("close"));
+    };
+    $("#dialogForm").addEventListener("submit", e => {
+      e.preventDefault();
+      dlg.close("ok");
+    });
+    document.addEventListener("keydown", e => { if (e.key === "Escape") dlg.close("cancel"); });
+  }
+
   /** Buka dialog. Mengembalikan objek nilai form, atau null jika dibatalkan. */
   function openDialog(opts){
     const dlg = $("#dialog");
-    if (dlg.open) return Promise.resolve(null);
+    if (isDialogOpen()) return Promise.resolve(null);
     const fields = opts.fields || [];
     $("#dialogTitle").textContent = opts.title;
     $("#dialogBody").innerHTML =
@@ -1019,9 +1045,8 @@
     $$("#lightbox [data-action=lb-edit], #lightbox [data-action=lb-delete]").forEach(b => { b.disabled = !!g._pending; });
   }
   function closeLightbox(){
-    const box = $("#lightbox");
-    if (box.hidden) return;
-    box.hidden = true;
+    // Selalu tutup tanpa memeriksa status sebelumnya, agar overlay tidak pernah "terkunci"
+    $("#lightbox").hidden = true;
     $("#lightboxImg").removeAttribute("src");
     lightboxIndex = -1;
     document.body.classList.remove("no-scroll");
@@ -1184,7 +1209,7 @@
     if (hasBackend){
       // Ambil perubahan dari perangkat pasangan secara berkala
       setInterval(() => {
-        if (document.visibilityState === "visible" && !$("#dialog").open) refresh({ silent: true });
+        if (document.visibilityState === "visible" && !isDialogOpen()) refresh({ silent: true });
       }, AUTO_REFRESH_MS);
       document.addEventListener("visibilitychange", () => {
         if (document.visibilityState === "visible" && (!lastSyncAt || Date.now() - lastSyncAt > 15000)) refresh({ silent: true });
@@ -1220,6 +1245,7 @@
     if (gate) gate.remove();
     $("#app").hidden = false;
     injectIcons(document);
+    ensureDialogSupport();
     bindUI();
     renderAll();
     spawnPetals();
