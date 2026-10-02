@@ -4,28 +4,44 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Menuju Hari Bahagia</title>
-<meta name="description" content="Perjalanan menuju pernikahan adat Bugis — dari Mapettuada hingga Resepsi.">
+<meta name="description" content="Perjalanan menuju pernikahan adat Bugis — dari Mappettuada hingga Resepsi.">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#FBEEE3">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Hari Bahagia">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%236E2F35'/%3E%3Ccircle cx='32' cy='32' r='24' fill='none' stroke='%23D9B276' stroke-width='2'/%3E%3Cpath d='M32 44s-11-7-11-14a6 6 0 0 1 11-3 6 6 0 0 1 11 3c0 7-11 14-11 14z' fill='%23FBEEE3'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<!-- Font dimuat tanpa memblokir halaman, supaya PIN bisa langsung dipakai di jaringan lambat -->
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Jost:wght@300;400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Jost:wght@300;400;500;600&display=swap" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Jost:wght@300;400;500;600&display=swap"></noscript>
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+<noscript><p class="noscript">Website ini membutuhkan JavaScript. Aktifkan JavaScript di browser kamu.</p></noscript>
 
 <!-- ===== PIN GATE ===== -->
 <div id="pinGate" class="pin-gate">
-  <div class="pin-card">
+  <div class="pin-card" id="pinCard">
     <div class="pin-motif" aria-hidden="true">
       <svg viewBox="0 0 120 40" width="120" height="40"><path d="M0 20 Q15 0 30 20 T60 20 T90 20 T120 20" stroke="var(--gold)" stroke-width="1.4" fill="none"/></svg>
     </div>
-    <p class="pin-eyebrow">Ruang privat untuk berdua</p>
+    <p class="eyebrow">Ruang privat untuk berdua</p>
     <h1 class="pin-title">Masukkan PIN</h1>
     <p class="pin-sub">Hanya kalian berdua yang tahu angka ini.</p>
-    <form id="pinForm" class="pin-form" autocomplete="off">
-      <input id="pinInput" class="pin-input" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="8" placeholder="••••" aria-label="PIN akses">
-      <button type="submit" class="btn btn-primary">Buka</button>
+    <form id="pinForm" class="pin-form" autocomplete="off" novalidate onsubmit="return false">
+      <div class="pin-field">
+        <label class="sr-only" for="pinInput">PIN akses</label>
+        <input id="pinInput" class="pin-input" type="password" inputmode="numeric" maxlength="12" placeholder="••••" autocomplete="off" required>
+        <button type="button" class="pin-toggle" id="pinToggle" aria-label="Tampilkan PIN" aria-pressed="false"><span data-icon="eye"></span></button>
+      </div>
+      <label class="check-line"><input type="checkbox" id="pinRemember"> Ingat di perangkat ini</label>
+      <button type="submit" class="btn btn-primary btn-block" id="pinSubmit">Buka</button>
     </form>
-    <p id="pinError" class="pin-error" hidden>PIN belum tepat, coba lagi.</p>
+    <p id="pinError" class="pin-error" role="alert" hidden></p>
+    <p id="pinMode" class="pin-mode" hidden></p>
   </div>
 </div>
 
@@ -34,142 +50,203 @@
   <div class="petals" id="petals" aria-hidden="true"></div>
 
   <header class="hero" id="hero">
+    <div class="hero-fade" aria-hidden="true"></div>
     <div class="hero-inner">
       <div class="hero-photo-wrap reveal" style="--delay:0">
-        <div class="hero-photo" id="heroPhoto" role="img" aria-label="Foto pasangan"></div>
+        <div class="hero-photo" id="heroPhoto" data-img-holder></div>
         <svg class="hero-ring" viewBox="0 0 220 220" aria-hidden="true">
           <circle cx="110" cy="110" r="106" fill="none" stroke="var(--gold)" stroke-width="1.5"/>
         </svg>
       </div>
-      <p class="hero-eyebrow reveal" style="--delay:1" id="heroEyebrow">Insya Allah akan bersanding</p>
-      <h1 class="hero-names reveal" style="--delay:2" id="heroNames">Nama &amp; Nama</h1>
-      <p class="hero-tagline reveal" style="--delay:3" id="heroTagline">Merangkai adat Bugis, dari Mapettuada menuju Resepsi.</p>
+      <p class="eyebrow reveal" style="--delay:1">Insya Allah akan bersanding</p>
+      <h1 class="hero-names reveal" style="--delay:2" id="heroNames"></h1>
+      <p class="hero-tagline reveal" style="--delay:3" id="heroTagline"></p>
 
-      <div class="countdown reveal" style="--delay:4" id="countdown">
+      <div class="countdown reveal" style="--delay:4" id="countdown" role="timer" aria-label="Hitung mundur menuju resepsi">
         <div class="cd-box"><span class="cd-num" id="cdDays">00</span><span class="cd-label">Hari</span></div>
         <div class="cd-box"><span class="cd-num" id="cdHours">00</span><span class="cd-label">Jam</span></div>
         <div class="cd-box"><span class="cd-num" id="cdMinutes">00</span><span class="cd-label">Menit</span></div>
         <div class="cd-box"><span class="cd-num" id="cdSeconds">00</span><span class="cd-label">Detik</span></div>
       </div>
-      <p class="hero-date reveal" style="--delay:5" id="heroDate">Tanggal resepsi belum diatur</p>
+      <p class="hero-done" id="heroDone" hidden>Alhamdulillah, hari bahagia telah tiba ✨</p>
+      <p class="hero-date reveal" style="--delay:5" id="heroDate"></p>
     </div>
-    <div class="hero-fade" aria-hidden="true"></div>
   </header>
 
-  <nav class="tabbar" id="tabbar" aria-label="Navigasi bagian">
-    <a href="#timeline">Roadmap</a>
-    <a href="#checklist">Checklist</a>
-    <a href="#budget">Budget</a>
-    <a href="#vendor">Vendor</a>
-    <a href="#gallery">Galeri</a>
+  <nav class="tabbar" aria-label="Navigasi bagian">
+    <div class="tabbar-inner">
+      <div class="tabs" id="tabs">
+        <a href="#ringkasan">Ringkasan</a>
+        <a href="#timeline">Roadmap</a>
+        <a href="#checklist">Checklist</a>
+        <a href="#budget">Budget</a>
+        <a href="#vendor">Vendor</a>
+        <a href="#gallery">Galeri</a>
+      </div>
+      <div class="tabbar-tools">
+        <button type="button" class="sync-pill" id="syncBtn" data-action="refresh" data-state="loading">
+          <span class="sync-dot" aria-hidden="true"></span><span class="sync-label" id="syncLabel">Memuat…</span>
+        </button>
+        <button type="button" class="icon-btn" data-action="settings" aria-label="Pengaturan" title="Pengaturan"><span data-icon="settings"></span></button>
+        <button type="button" class="icon-btn" data-action="lock" aria-label="Kunci website" title="Kunci website"><span data-icon="lock"></span></button>
+      </div>
+    </div>
   </nav>
 
-  <main>
-    <!-- ===== TIMELINE ===== -->
-    <section id="timeline" class="section">
-      <div class="section-head">
-        <p class="section-eyebrow">Tahapan adat</p>
-        <h2>Roadmap menuju hari bahagia</h2>
+  <main id="main">
+    <!-- ===== RINGKASAN ===== -->
+    <section id="ringkasan" class="section section-summary" aria-labelledby="ringkasanTitle">
+      <h2 class="sr-only" id="ringkasanTitle">Ringkasan persiapan</h2>
+      <div class="stats" id="stats"></div>
+      <div class="panel agenda">
+        <div class="panel-head">
+          <h3>Agenda terdekat</h3>
+          <p class="muted">Tahapan &amp; tugas yang punya tanggal</p>
+        </div>
+        <ul class="agenda-list" id="agendaList"></ul>
       </div>
-      <ol class="roadmap" id="roadmap"><!-- stages injected here --></ol>
+    </section>
+
+    <!-- ===== TIMELINE ===== -->
+    <section id="timeline" class="section section-alt">
+      <div class="section-head">
+        <p class="eyebrow">Tahapan adat</p>
+        <h2>Roadmap menuju hari bahagia</h2>
+        <p class="section-sub" id="timelineSub"></p>
+      </div>
+      <ol class="roadmap" id="roadmap"></ol>
     </section>
 
     <!-- ===== CHECKLIST ===== -->
-    <section id="checklist" class="section section-alt">
+    <section id="checklist" class="section">
       <div class="section-head">
-        <p class="section-eyebrow">Kerjakan berdua</p>
+        <p class="eyebrow">Kerjakan berdua</p>
         <h2>Checklist persiapan</h2>
       </div>
       <div class="panel">
-        <form id="checklistForm" class="inline-form">
-          <input id="checklistInput" type="text" placeholder="Tambah tugas baru…" required>
-          <input id="checklistPic" type="text" placeholder="PIC (opsional)" class="w-sm">
-          <button type="submit" class="btn btn-ghost">Tambah</button>
+        <form id="checklistForm" class="quick-add" autocomplete="off" onsubmit="return false">
+          <label class="sr-only" for="checklistInput">Tugas baru</label>
+          <input id="checklistInput" class="grow" type="text" placeholder="Tambah tugas baru…" maxlength="300" required>
+          <label class="sr-only" for="checklistPic">PIC</label>
+          <input id="checklistPic" class="w-sm" type="text" placeholder="PIC (opsional)" list="picList" maxlength="60">
+          <label class="sr-only" for="checklistDue">Tenggat</label>
+          <input id="checklistDue" class="w-date" type="date" title="Tenggat (opsional)">
+          <button type="submit" class="btn btn-primary"><span data-icon="plus"></span>Tambah</button>
         </form>
-        <p class="progress-line"><span id="checklistProgressText">0 dari 0 selesai</span></p>
-        <div class="progress-bar"><div class="progress-fill" id="checklistProgressFill"></div></div>
+
+        <div class="progress-wrap">
+          <div class="progress-line"><span id="checklistProgressText">0 dari 0 selesai</span><span id="checklistProgressPct">0%</span></div>
+          <div class="progress-bar"><div class="progress-fill" id="checklistProgressFill"></div></div>
+        </div>
+
+        <div class="panel-toolbar">
+          <div class="chips" id="checklistFilters" aria-label="Filter checklist"></div>
+          <button type="button" class="btn btn-soft btn-sm" data-action="template" id="templateBtn"><span data-icon="sparkle"></span>Template adat Bugis</button>
+        </div>
         <ul class="checklist" id="checklistList"></ul>
       </div>
     </section>
 
     <!-- ===== BUDGET ===== -->
-    <section id="budget" class="section">
+    <section id="budget" class="section section-alt">
       <div class="section-head">
-        <p class="section-eyebrow">Rencana keuangan</p>
+        <p class="eyebrow">Rencana keuangan</p>
         <h2>Budget tracker</h2>
       </div>
       <div class="panel">
-        <form id="budgetForm" class="inline-form inline-form-budget">
-          <input id="budgetKategori" type="text" placeholder="Kategori (mis. Katering)" required>
-          <input id="budgetEstimasi" type="number" min="0" placeholder="Estimasi (Rp)" required>
-          <input id="budgetAktual" type="number" min="0" placeholder="Aktual (Rp)">
-          <input id="budgetCatatan" type="text" placeholder="Catatan (opsional)">
-          <button type="submit" class="btn btn-ghost">Tambah</button>
-        </form>
+        <div class="budget-summary" id="budgetSummary"></div>
+        <div class="meter"><div class="meter-fill" id="budgetMeter"></div></div>
+        <p class="meter-caption" id="budgetMeterText"></p>
+
+        <div class="panel-toolbar">
+          <p class="muted" id="budgetCount"></p>
+          <button type="button" class="btn btn-primary btn-sm" data-action="add" data-entity="budget"><span data-icon="plus"></span>Tambah pos</button>
+        </div>
         <div class="table-wrap">
           <table class="budget-table">
-            <thead><tr><th>Kategori</th><th>Estimasi</th><th>Aktual</th><th>Catatan</th><th></th></tr></thead>
+            <thead>
+              <tr><th>Kategori</th><th class="num">Estimasi</th><th class="num">Dibayar</th><th class="num">Sisa</th><th class="cell-actions"><span class="sr-only">Aksi</span></th></tr>
+            </thead>
             <tbody id="budgetBody"></tbody>
-            <tfoot>
-              <tr><td>Total</td><td id="budgetTotalEstimasi">Rp 0</td><td id="budgetTotalAktual">Rp 0</td><td colspan="2" id="budgetSisa">Sisa: Rp 0</td></tr>
-            </tfoot>
+            <tfoot id="budgetFoot"></tfoot>
           </table>
         </div>
       </div>
     </section>
 
     <!-- ===== VENDOR ===== -->
-    <section id="vendor" class="section section-alt">
+    <section id="vendor" class="section">
       <div class="section-head">
-        <p class="section-eyebrow">Rekan kerja sama</p>
+        <p class="eyebrow">Rekan kerja sama</p>
         <h2>Daftar vendor</h2>
       </div>
       <div class="panel">
-        <form id="vendorForm" class="inline-form inline-form-vendor">
-          <input id="vendorNama" type="text" placeholder="Nama vendor" required>
-          <input id="vendorKategori" type="text" placeholder="Kategori (mis. Katering)" required>
-          <input id="vendorKontak" type="text" placeholder="Kontak (WA/telepon)">
-          <input id="vendorHarga" type="text" placeholder="Harga / paket">
-          <select id="vendorStatus">
-            <option value="Dipertimbangkan">Dipertimbangkan</option>
-            <option value="Dihubungi">Dihubungi</option>
-            <option value="Deal">Deal</option>
-          </select>
-          <button type="submit" class="btn btn-ghost">Tambah</button>
-        </form>
+        <div class="panel-toolbar">
+          <div class="chips" id="vendorFilters" aria-label="Filter vendor"></div>
+          <button type="button" class="btn btn-primary btn-sm" data-action="add" data-entity="vendor"><span data-icon="plus"></span>Tambah vendor</button>
+        </div>
         <div class="vendor-grid" id="vendorGrid"></div>
       </div>
     </section>
 
     <!-- ===== GALLERY ===== -->
-    <section id="gallery" class="section">
+    <section id="gallery" class="section section-alt">
       <div class="section-head">
-        <p class="section-eyebrow">Kenangan</p>
+        <p class="eyebrow">Kenangan</p>
         <h2>Galeri foto</h2>
       </div>
       <div class="panel">
-        <form id="galleryForm" class="inline-form">
-          <input id="galleryUrl" type="url" placeholder="Tempel link foto (Google Drive/Imgur, dsb.)" required>
-          <input id="galleryCaption" type="text" placeholder="Keterangan (opsional)">
-          <button type="submit" class="btn btn-ghost">Tambah foto</button>
-        </form>
+        <div class="panel-toolbar">
+          <p class="muted" id="galleryCount"></p>
+          <button type="button" class="btn btn-primary btn-sm" data-action="add" data-entity="gallery"><span data-icon="plus"></span>Tambah foto</button>
+        </div>
         <div class="gallery-grid" id="galleryGrid"></div>
       </div>
     </section>
   </main>
 
   <footer class="site-footer">
+    <p class="footer-names" id="footerNames"></p>
     <p id="syncStatus">Memuat data…</p>
   </footer>
+</div>
 
-  <div class="lightbox" id="lightbox" hidden>
-    <div class="lightbox-content">
-      <button class="lightbox-close" id="lightboxClose" aria-label="Tutup">&times;</button>
-      <img id="lightboxImg" alt="">
-      <p id="lightboxCaption"></p>
-    </div>
+<!-- ===== LIGHTBOX ===== -->
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Pratinjau foto" hidden>
+  <div class="lightbox-backdrop" data-action="lb-close"></div>
+  <button type="button" class="lb-btn lb-close" data-action="lb-close" aria-label="Tutup"><span data-icon="x"></span></button>
+  <button type="button" class="lb-btn lb-prev" data-action="lb-prev" aria-label="Foto sebelumnya"><span data-icon="chevronLeft"></span></button>
+  <button type="button" class="lb-btn lb-next" data-action="lb-next" aria-label="Foto berikutnya"><span data-icon="chevronRight"></span></button>
+  <figure class="lightbox-figure" id="lightboxFigure" data-img-holder>
+    <img id="lightboxImg" alt="">
+    <p class="lb-broken">Foto tidak dapat dimuat. Pastikan link-nya dibagikan ke publik.</p>
+    <figcaption><span id="lightboxCaption"></span><span class="lb-counter" id="lightboxCounter"></span></figcaption>
+  </figure>
+  <div class="lb-actions">
+    <a class="btn btn-light btn-sm" id="lightboxOpen" href="#" target="_blank" rel="noopener"><span data-icon="external"></span>Buka asli</a>
+    <button type="button" class="btn btn-light btn-sm" data-action="lb-edit"><span data-icon="edit"></span>Ubah keterangan</button>
+    <button type="button" class="btn btn-danger btn-sm" data-action="lb-delete"><span data-icon="trash"></span>Hapus</button>
   </div>
 </div>
+
+<!-- ===== DIALOG (form tambah/ubah & konfirmasi) ===== -->
+<dialog class="dialog" id="dialog" aria-labelledby="dialogTitle">
+  <form method="dialog" class="dialog-form" id="dialogForm">
+    <header class="dialog-head">
+      <h2 id="dialogTitle"></h2>
+      <button type="button" class="icon-btn" data-dialog-close aria-label="Tutup"><span data-icon="x"></span></button>
+    </header>
+    <div class="dialog-body" id="dialogBody"></div>
+    <footer class="dialog-actions">
+      <button type="button" class="btn btn-ghost" data-dialog-close>Batal</button>
+      <button type="submit" value="ok" class="btn btn-primary" id="dialogOk">Simpan</button>
+    </footer>
+  </form>
+</dialog>
+
+<div class="toasts" id="toasts" role="status" aria-live="polite"></div>
+<datalist id="kategoriList"></datalist>
+<datalist id="picList"></datalist>
 
 <script src="js/data.js"></script>
 <script src="js/script.js"></script>
